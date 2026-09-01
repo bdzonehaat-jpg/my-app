@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Open'Ix AI — One Intelligence. Infinite Possibilities.</title>
+  
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       OPEN'IX DESIGN SYSTEM TOKENS & BASE STYLES
+       ========================================================================== */
+    :root {
+      /* Palette */
+      --bg-midnight: #080B14;
+      --surface-graphite: #111522;
+      --surface-elevated: #181D2B;
+      --border-accent: #2A3040;
+      
+      --purple-primary: #7C3AED;
+      --purple-deep: #4C1D95;
+      --purple-electric: #A855F7;
+      --purple-glow: rgba(124, 58, 237, 0.25);
+      --purple-translucent: rgba(124, 58, 237, 0.12);
+
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+
+      --status-success: #22C55E;
+      --status-warning: #F59E0B;
+      --status-error: #EF4444;
+
+      /* UI Standards */
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+
+      --transition-fast: 0.15s ease;
+      --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      
+      --sidebar-width: 260px;
+      --header-height: 64px;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-midnight);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      color: inherit;
+      outline: none;
+      border: none;
+      background: none;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-accent);
+      border-radius: 99px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--purple-primary);
+    }
+
+    /* Background Ambient Glow */
+    .ambient-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--purple-glow) 0%, rgba(8, 11, 20, 0) 70%);
+      top: -200px;
+      right: -200px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Glass Container Utilities */
+    .glass-panel {
+      background: rgba(17, 21, 34, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-accent);
+    }
+
+    /* Badge & Micro Components */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-purple {
+      background: var(--purple-translucent);
+      color: var(--purple-electric);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .badge-success {
+      background: rgba(34, 197, 94, 0.1);
+      color: var(--status-success);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--purple-primary);
+      color: #fff;
+      box-shadow: 0 4px 14px var(--purple-glow);
+    }
+    .btn-primary:hover {
+      background: var(--purple-electric);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border-accent);
+    }
+    .btn-secondary:hover {
+      background: var(--border-accent);
+    }
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+    }
+    .btn-icon:hover {
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+    }
+
+    /* ==========================================================================
+       LAYOUT STRUCTURE
+       ========================================================================== */
+    #app-root {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* MAIN SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      height: 100%;
+      background: var(--surface-graphite);
+      border-right: 1px solid var(--border-accent);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: transform var(--transition-normal);
+      z-index: 10;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--purple-primary), var(--purple-electric));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px var(--purple-glow);
+    }
+
+    .sidebar-actions {
+      padding: 0 16px 16px 16px;
+    }
+
+    .btn-new-chat {
+      width: 100%;
+      justify-content: flex-start;
+      background: var(--surface-elevated);
+      border: 1px dashed var(--border-accent);
+      color: var(--text-primary);
+      padding: 10px 14px;
+    }
+
+    .btn-new-chat:hover {
+      border-color: var(--purple-primary);
+      background: var(--purple-translucent);
+    }
+
+    .nav-group {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-weight: 500;
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .nav-item:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .nav-item.active {
+      color: var(--text-primary);
+      background: var(--purple-translucent);
+      border-left: 3px solid var(--purple-primary);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border-accent);
+    }
+
+    .pro-card {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(76, 29, 149, 0.2));
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pro-card-title {
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* MAIN CONTENT VIEW */
+    .main-viewport {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .top-navbar {
+      height: var(--header-height);
+      border-bottom: 1px solid var(--border-accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(8, 11, 20, 0.8);
+      backdrop-filter: blur(12px);
+    }
+
+    .view-title {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 99px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .content-area {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* TAB PANELS */
+    .tab-panel {
+      display: none;
+      height: 100%;
+      width: 100%;
+      overflow-y: auto;
+    }
+
+    .tab-panel.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ==========================================================================
+       VIEW 1: CHAT INTERFACE
+       ========================================================================== */
+    .chat-layout {
+      display: flex;
+      height: 100%;
+      width: 100%;
+    }
+
+    .chat-workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .message-row {
+      display: flex;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .message-row.user {
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .message-row.user .message-avatar {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-accent);
+    }
+
+    .message-row.ai .message-avatar {
+      background: var(--purple-primary);
+    }
+
+    .message-card {
+      max-width: 75%;
+      padding: 14px 18px;
+      border-radius: var(--radius-lg);
+      line-height: 1.6;
+    }
+
+    .message-row.user .message-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-accent);
+      border-top-right-radius: 4px;
+    }
+
+    .message-row.ai .message-card {
+      background: var(--surface-graphite);
+      border: 1px solid var(--border-accent);
+      border-top-left-radius: 4px;
+    }
+
+    /* Input Bar */
+    .chat-input-container {
+      padding: 20px 24px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .chat-input-box {
+      background: var(--surface-graphite);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-xl);
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color var(--transition-fast);
+    }
+
+    .chat-input-box:focus-within {
+      border-color: var(--purple-primary);
+      box-shadow: 0 0 16px var(--purple-glow);
+    }
+
+    .chat-input-box textarea {
+      width: 100%;
+      resize: none;
+      height: 48px;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .chat-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 8px;
+    }
+
+    .control-tools {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .web-search-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: var(--surface-elevated);
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .web-search-toggle.active {
+      color: var(--purple-electric);
+      background: var(--purple-translucent);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    /* ==========================================================================
+       VIEW 2: MODEL SELECTOR HUB
+       ========================================================================== */
+    .hub-container {
+      padding: 32px;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .hub-header {
+      margin-bottom: 24px;
+    }
+
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .model-card {
+      background: var(--surface-graphite);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .model-card:hover {
+      border-color: var(--purple-primary);
+      transform: translateY(-2px);
+    }
+
+    .model-card.selected {
+      border-color: var(--purple-electric);
+      background: linear-gradient(180deg, var(--surface-graphite) 0%, var(--purple-translucent) 100%);
+    }
+
+    .model-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .model-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .model-desc {
+      color: var(--text-secondary);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .model-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       VIEW 3: PROMPT INTELLIGENCE STUDIO
+       ========================================================================== */
+    .studio-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding: 24px;
+      height: 100%;
+    }
+
+    .studio-panel {
+      background: var(--surface-graphite);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .form-control {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+
+    .output-preview {
+      background: var(--bg-midnight);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      flex: 1;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    /* ==========================================================================
+       VIEW 4: MY PROMPTS DASHBOARD & THREE-DOT MENU
+       ========================================================================== */
+    .prompts-container {
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .prompt-card {
+      background: var(--surface-graphite);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 180px;
+      position: relative;
+    }
+
+    .prompt-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .action-menu-trigger {
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    .action-menu-trigger:hover {
+      background: var(--surface-elevated);
+    }
+
+    /* Context Menu Dropdown */
+    .context-menu {
+      position: absolute;
+      top: 40px;
+      right: 16px;
+      width: 180px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      display: none;
+      flex-direction: column;
+      z-index: 100;
+      padding: 6px;
+    }
+
+    .context-menu.active {
+      display: flex;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      background: var(--purple-translucent);
+      color: var(--text-primary);
+    }
+
+    .menu-item.danger:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--status-error);
+    }
+
+    /* ==========================================================================
+       VIEW 5: AI AGENTS BUILDER
+       ========================================================================== */
+    .agents-container {
+      padding: 32px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .agent-builder-card {
+      background: var(--surface-graphite);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Modal Component */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(8, 11, 20, 0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--surface-graphite);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      width: 450px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE ADAPTATION
+       ========================================================================== */
+    .mobile-menu-btn {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .studio-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: absolute;
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .mobile-menu-btn {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow"></div>
+
+  <div id="app-root">
+
+    <!-- 1️⃣ MAIN SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-container">
+          <div class="logo-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <span>Open'Ix AI</span>
+        </div>
+      </div>
+
+      <div class="sidebar-actions">
+        <button class="btn btn-new-chat" onclick="switchTab('chat')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Conversation
+        </button>
+      </div>
+
+      <nav class="nav-group">
+        <a href="#" class="nav-item active" onclick="switchTab('chat', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          AI Chat
+        </a>
+        <a href="#" class="nav-item" onclick="switchTab('models', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Model Hub
+        </a>
+        <a href="#" class="nav-item" onclick="switchTab('studio', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Prompt Studio
+        </a>
+        <a href="#" class="nav-item" onclick="switchTab('prompts', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          My Prompts
+        </a>
+        <a href="#" class="nav-item" onclick="switchTab('agents', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          AI Agents
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="pro-card">
+          <div class="pro-card-title">
+            <span>PRO PLAN</span>
+            <span class="badge badge-purple">Active</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-secondary);">Unlimited access to advanced intelligence models.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEWPORT -->
+    <main class="main-viewport">
+      
+      <!-- NAVBAR -->
+      <header class="top-navbar">
+        <div class="view-title">
+          <button class="btn btn-icon mobile-menu-btn" onclick="toggleSidebar()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <span id="current-tab-title">AI Chat Workspace</span>
+        </div>
+
+        <div class="user-profile">
+          <span class="badge badge-success">System Operational</span>
+          <div class="avatar">OP</div>
+        </div>
+      </header>
+
+      <div class="content-area">
+
+        <!-- 2️⃣ CHAT INTERFACE TAB -->
+        <section id="tab-chat" class="tab-panel active">
+          <div class="chat-workspace">
+            <div class="chat-messages" id="chat-messages">
+              <div class="message-row ai">
+                <div class="message-avatar">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                <div class="message-card">
+                  👋 Welcome to Open'Ix AI. How can I assist your productivity, analysis, or development tasks today?
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-input-container">
+              <div class="chat-input-box">
+                <textarea id="chat-textarea" placeholder="Ask Open'Ix anything... (Press Enter to Send)"></textarea>
+                <div class="chat-controls">
+                  <div class="control-tools">
+                    <button class="web-search-toggle" id="search-toggle" onclick="toggleWebSearch()">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                      Web Search
+                    </button>
+                  </div>
+                  <button class="btn btn-primary" onclick="sendMessage()">Send ➤</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3️⃣ MODEL HUB TAB -->
+        <section id="tab-models" class="tab-panel">
+          <div class="hub-container">
+            <div class="hub-header">
+              <h2>Open'Ix Model Hub</h2>
+              <p style="color: var(--text-secondary)">Select and manage active intelligence engines.</p>
+            </div>
+
+            <div class="model-grid">
+              <div class="model-card selected" onclick="selectModel(this)">
+                <div class="model-card-header">
+                  <div class="model-name">Open'Ix Core 3.3.3</div>
+                  <span class="badge badge-purple">Recommended</span>
+                </div>
+                <div class="model-desc">Most powerful flagship intelligence engine for complex enterprise reasoning.</div>
+                <div class="model-meta">
+                  <span>Speed: Ultra</span> • <span>Context: 128k</span>
+                </div>
+              </div>
+
+              <div class="model-card" onclick="selectModel(this)">
+                <div class="model-card-header">
+                  <div class="model-name">Open'Ix Speed-0.3</div>
+                  <span class="badge">Fast</span>
+                </div>
+                <div class="model-desc">Lightweight model optimized for rapid response times and daily tasks.</div>
+                <div class="model-meta">
+                  <span>Speed: Instant</span> • <span>Context: 32k</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4️⃣ PROMPT STUDIO TAB -->
+        <section id="tab-studio" class="tab-panel">
+          <div class="studio-container">
+            <div class="studio-panel">
+              <h3>Prompt Studio</h3>
+              <div class="form-group">
+                <label>Target Goal</label>
+                <input type="text" id="studio-goal" class="form-control" placeholder="e.g., Generate a REST Endpoint code review prompt" />
+              </div>
+
+              <div class="control-grid">
+                <div class="form-group">
+                  <label>Tone</label>
+                  <select class="form-control" id="studio-tone">
+                    <option>Strict & Technical</option>
+                    <option>Creative & Narrative</option>
+                    <option>Professional Executive</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Complexity</label>
+                  <select class="form-control" id="studio-complexity">
+                    <option>Production Ready</option>
+                    <option>Intermediate</option>
+                    <option>Simple Overview</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" onclick="generateOptimizedPrompt()" style="margin-top: 10px;">✨ Enhance Prompt with Open'Ix</button>
+            </div>
+
+            <div class="studio-panel">
+              <h3>Structured Output</h3>
+              <div class="output-preview" id="studio-output">// Engineered Prompt Output Will Display Here...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5️⃣ MY PROMPTS TAB & THREE-DOT MENU -->
+        <section id="tab-prompts" class="tab-panel">
+          <div class="prompts-container">
+            <h2>My Saved Prompts</h2>
+            <div class="prompt-grid">
+              
+              <div class="prompt-card">
+                <div class="prompt-card-header">
+                  <strong>REST Endpoint Architect</strong>
+                  <div class="action-menu-trigger" onclick="toggleContextMenu(event)">•••</div>
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">CRTSE-based schema for generating Express/Prisma API endpoints.</p>
+                <div class="badge badge-purple" style="align-self: flex-start; margin-top: auto;">Engineering</div>
+
+                <!-- Context Menu -->
+                <div class="context-menu">
+                  <div class="menu-item" onclick="alert('Editing prompt...')">✏️ Edit</div>
+                  <div class="menu-item" onclick="alert('Duplicated!')">📄 Duplicate</div>
+                  <div class="menu-item danger" onclick="deletePromptCard(this)">🗑 Delete</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- 6️⃣ AI AGENTS TAB -->
+        <section id="tab-agents" class="tab-panel">
+          <div class="agents-container">
+            <div class="agent-builder-card">
+              <h2>Agent Builder Workspace</h2>
+              <div class="form-group">
+                <label>Agent Name</label>
+                <input type="text" class="form-control" placeholder="e.g., Security Audit Specialist" />
+              </div>
+              <div class="form-group">
+                <label>System Instructions</label>
+                <textarea class="form-control" style="height: 100px; resize: none;" placeholder="Define exact agent behavior, standards, and rules..."></textarea>
+              </div>
+              <button class="btn btn-primary" onclick="openModal()" style="align-self: flex-start;">Deploy Custom Agent</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL DIALOG -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box">
+      <h3>Agent Deployment Status</h3>
+      <p style="color: var(--text-secondary); font-size: 13px;">Your Open'Ix Custom Agent has been initialized into your workspace successfully.</p>
+      <button class="btn btn-primary" onclick="closeModal()" style="align-self: flex-end;">Done</button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+     INTERACTIVE JAVASCRIPT LOGIC
+     ========================================================================== -->
+  <script>
+    /* Tab Navigation Logic */
+    function switchTab(tabId, element) {
+      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+
+      const targetPanel = document.getElementById(`tab-${tabId}`);
+      if (targetPanel) targetPanel.classList.add('active');
+
+      if (element) {
+        element.classList.add('active');
+      }
+
+      // Title Update
+      const titles = {
+        chat: "AI Chat Workspace",
+        models: "Model Hub & Intelligence Routing",
+        studio: "Prompt Intelligence Studio",
+        prompts: "My Prompts Directory",
+        agents: "AI Agent Builder"
+      };
+      document.getElementById('current-tab-title').innerText = titles[tabId] || "Open'Ix Platform";
+      
+      // Close mobile drawer if open
+      document.getElementById('sidebar').classList.remove('open');
+    }
+
+    /* Responsive Sidebar Drawer */
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    /* Web Search Toggle */
+    function toggleWebSearch() {
+      document.getElementById('search-toggle').classList.toggle('active');
+    }
+
+    /* Chat Streaming Simulation */
+    function sendMessage() {
+      const textarea = document.getElementById('chat-textarea');
+      const text = textarea.value.trim();
+      if (!text) return;
+
+      const chatMessages = document.getElementById('chat-messages');
+
+      // Add User Message
+      const userRow = document.createElement('div');
+      userRow.className = 'message-row user';
+      userRow.innerHTML = `
+        <div class="message-avatar">U</div>
+        <div class="message-card">${escapeHTML(text)}</div>
+      `;
+      chatMessages.appendChild(userRow);
+
+      textarea.value = '';
+
+      // Simulate AI Response
+      setTimeout(() => {
+        const aiRow = document.createElement('div');
+        aiRow.className = 'message-row ai';
+        aiRow.innerHTML = `
+          <div class="message-avatar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="message-card">
+            Received query regarding: "<em>${escapeHTML(text)}</em>". Open'Ix Core model is generating optimal solutions...
+          </div>
+        `;
+        chatMessages.appendChild(aiRow);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 600);
+    }
+
+    /* Enter key to send message */
+    document.getElementById('chat-textarea').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    /* Model Selector */
+    function selectModel(card) {
+      document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+    }
+
+    /* Prompt Studio Optimizer Simulation */
+    function generateOptimizedPrompt() {
+      const goal = document.getElementById('studio-goal').value || "Production API Endpoint";
+      const tone = document.getElementById('studio-tone').value;
+      const complexity = document.getElementById('studio-complexity').value;
+
+      const result = `[ROLE]: You are a Lead Software Architect.
+[CONTEXT]: Enterprise multi-tenant SaaS application setup.
+[TASK]: ${goal}.
+[STANDARDS]: Output must be ${tone.toLowerCase()}, fully production-ready, adherence to ${complexity} specifications. Zero invalid inputs.`;
+
+      document.getElementById('studio-output').innerText = result;
+    }
+
+    /* Three-Dot Menu Controls */
+    function toggleContextMenu(event) {
+      event.stopPropagation();
+      const menu = event.target.closest('.prompt-card').querySelector('.context-menu');
+      document.querySelectorAll('.context-menu').forEach(m => {
+        if (m !== menu) m.classList.remove('active');
+      });
+      menu.classList.toggle('active');
+    }
+
+    function deletePromptCard(el) {
+      const card = el.closest('.prompt-card');
+      card.remove();
+    }
+
+    /* Close Context Menus on Global Click */
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.context-menu').forEach(m => m.classList.remove('active'));
+    });
+
+    /* Modal Controls */
+    function openModal() {
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+
+    /* Utility Helpers */
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>
